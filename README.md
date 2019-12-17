@@ -1,2 +1,1 @@
-# Unitsman
-A smart Unit Converter
+Unitsman
