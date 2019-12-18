@@ -14,8 +14,8 @@ namespace UnitsmanTests
             Options opts = new Options();
             parsedArgs.WithParsed(x => opts = x);
             Assert.AreEqual(args[0], opts.Unit1Value.ToString());
-            Assert.AreEqual(args[1], opts.Unit1Type);
-            Assert.AreEqual(args[2], opts.Unit2Type);
+            Assert.AreEqual(args[1], opts.SourceUnit);
+            Assert.AreEqual(args[2], opts.TargetUnit);
         }
     }
 }

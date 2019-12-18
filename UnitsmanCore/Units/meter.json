@@ -1,0 +1,11 @@
+{
+    "name":"meter",
+    "symbol": "m",
+    "type": "length",
+    "usesSIPrefixes": "true",
+    "conversionTable": {
+        "foot": "3.2808399",
+        "inch": "39.3700787",
+        "nautical mile": "0.00053995680"
+    }
+}

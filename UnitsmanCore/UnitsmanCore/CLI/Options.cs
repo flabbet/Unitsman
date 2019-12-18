@@ -8,9 +8,9 @@ namespace UnitsmanCore.CLI
         public double Unit1Value {get;set;}
 
         [Value(1)]
-        public string Unit1Type { get; set; }
+        public string SourceUnit { get; set; }
 
         [Value(2)]
-        public string Unit2Type { get; set; }
+        public string TargetUnit { get; set; }
     }
 }
