@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnitsmanCore.CLI;
 using UnitsmanCore.Converter;
 using UnitsmanCore.Exceptions;
@@ -18,7 +19,7 @@ namespace UnitsmanCore
                 Options options = new Options();
                 parsedArgs.WithParsed(x => options = x);
 
-                UnitsLoader loader = new UnitsLoader(@"E:\Git\Unitsman\UnitsmanCore\Units");
+                UnitsLoader loader = new UnitsLoader(Path.Combine("..", "..", "..", "..", "Units"));
                 Console.WriteLine("Loading Units...");
                 List<Unit> units = loader.LoadUnits();
                 Console.WriteLine($"{units.Count} units loaded");

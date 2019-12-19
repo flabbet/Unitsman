@@ -2,7 +2,7 @@
   "profiles": {
     "UnitsmanCore": {
       "commandName": "Project",
-      "commandLineArgs": "15 ft m"
+      "commandLineArgs": "20 ft \"nautical mile\""
     }
   }
 }

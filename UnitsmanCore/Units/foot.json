@@ -5,7 +5,6 @@
     "usesSIPrefixes": "false",
     "conversionTable": {
         "meter": "0.3048",
-        "inch": "12",
-        "nautical mile": "0.000164578834"
+        "inch": "12"
     }
 }
