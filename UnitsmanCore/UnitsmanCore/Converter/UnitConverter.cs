@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnitsmanCore.Exceptions;
 
@@ -29,21 +30,7 @@ namespace UnitsmanCore.Converter
         {
             try
             {
-                ParsedSourceUnit = FindUnit(SourceUnit);
-                ParsedTargetUnit = FindUnit(TargetUnit);
-                if (!ConversionPossible(ParsedSourceUnit, ParsedTargetUnit))
-                {
-                    throw new ConversionMismatchException($"Conversion of {ParsedSourceUnit.UnitType.ToString()} to " +
-                    $"{ParsedTargetUnit.UnitType.ToString()} is not possible.");
-                }
-
-                if (ParsedSourceUnit.ConversionTable.ContainsKey(ParsedTargetUnit.Name))
-                {
-                    return Value * ParsedSourceUnit.ConversionTable[ParsedTargetUnit.Name];
-                }
-                throw new ConversionNotFoundException($"Conversion from {ParsedSourceUnit.Name.ToUpperInvariant()} to " +
-                    $"{ParsedTargetUnit.Name.ToUpperInvariant()} wasn't found.");
-
+                return Convert(Value, SourceUnit, TargetUnit);
             }
             catch (ConversionException ex)
             {
@@ -55,20 +42,25 @@ namespace UnitsmanCore.Converter
         {
             try
             {
-                Unit srcUnit = FindUnit(SourceUnit);
-                Unit trgtUnit = FindUnit(TargetUnit);
-                if (!ConversionPossible(srcUnit, trgtUnit))
+                ParsedSourceUnit = FindUnit(sourceUnit);
+                ParsedTargetUnit = FindUnit(targetUnit);
+                if (!ConversionPossible(ParsedSourceUnit, ParsedTargetUnit))
                 {
-                    throw new ConversionMismatchException($"Conversion of {srcUnit.UnitType.ToString()} to " +
-                    $"{trgtUnit.UnitType.ToString()} is not possible.");
+                    throw new ConversionMismatchException($"Conversion of {ParsedSourceUnit.UnitType.ToString()} to " +
+                    $"{ParsedTargetUnit.UnitType.ToString()} is not possible.");
                 }
 
-                if (srcUnit.ConversionTable.ContainsKey(trgtUnit.Name))
+                if (ParsedSourceUnit.ConversionTable.ContainsKey(ParsedTargetUnit.Name))
                 {
-                    return Value * srcUnit.ConversionTable[trgtUnit.Name];
+                    return value * ParsedSourceUnit.ConversionTable[ParsedTargetUnit.Name];
                 }
-                throw new ConversionNotFoundException($"Conversion from {srcUnit.Name.ToUpperInvariant()} to " +
-                    $"{trgtUnit.Name.ToUpperInvariant()} wasn't found.");
+                else if (ParsedTargetUnit.ConversionTable.ContainsKey(ParsedSourceUnit.Name))
+                {
+                    return value * ParsedTargetUnit.ConversionTable[ParsedSourceUnit.Name];
+                }
+
+                throw new ConversionNotFoundException($"Conversion from {ParsedSourceUnit.Name.ToUpperInvariant()} to " +
+                    $"{ParsedTargetUnit.Name.ToUpperInvariant()} wasn't found.");
 
             }
             catch (ConversionException ex)
@@ -91,7 +83,7 @@ namespace UnitsmanCore.Converter
                 {
                     return generatedUnit;
                 }
-                throw new UnitNotFoundException($"{unit} was not found in units table.");
+                throw new UnitNotFoundException($"{unit.ToUpperInvariant()} was not found in units table.");
             }
             return foundUnit;
         }
@@ -106,32 +98,81 @@ namespace UnitsmanCore.Converter
                 ConversionTable = new Dictionary<string, double>()
             };
 
-            if (unit1.UnitType == UnitTypes.None && unit2.UnitType == UnitTypes.None)
+            Unit deepSearchTargetUnit = new Unit();
+            if(unit1.UnitType != UnitTypes.None)
+            {
+                deepSearchTargetUnit = unit1;
+            }
+            else if(unit2.UnitType != UnitTypes.None)
+            {
+                deepSearchTargetUnit = unit2;
+            }
+            else
             {
                 return false;
             }
-            if(ParsedSourceUnit.UnitType != UnitTypes.None)
+
+            DeepConversionResult resultDeepConversion = DeepConversionSearch(deepSearchTargetUnit, unit);
+            foundUnit.Name = unit;
+            foundUnit.UnitType = resultDeepConversion.Value.UnitType;
+            if (resultDeepConversion.WasSuccessful)
             {
-                foreach (var conversion in unit1.ConversionTable)
+                Tuple<string, double> conversionRecord = GenerateConversionTableFromPath(deepSearchTargetUnit, unit, resultDeepConversion.ConversionPath);
+                foundUnit.ConversionTable.Add(conversionRecord.Item1, conversionRecord.Item2);
+            }
+            return resultDeepConversion.WasSuccessful;
+        }
+
+        private Tuple<string, double> GenerateConversionTableFromPath(Unit startingUnit, string targetUnit, List<Unit> conversionPath)
+        {
+            string key = startingUnit.Name;
+            double val = 0;
+
+            for(int i = 0; i < conversionPath.Count; i++) 
+            {
+                val = 1 / conversionPath[i].ConversionTable[key];
+                key = conversionPath[i].Name;
+                if(i == conversionPath.Count - 1)
                 {
-                    if(conversion.Key == unit)
-                    {
-                        foundUnit.Name = unit;
-                        foundUnit.UnitType = unit1.UnitType;
-                        return true;
-                    }
+                    val *= conversionPath[i].ConversionTable[targetUnit];
                 }
             }
-            if(unit2.UnitType != UnitTypes.None)
+
+            return new Tuple<string, double>(startingUnit.Name, val);
+        }
+
+        private DeepConversionResult DeepConversionSearch(Unit currentUnit, string unitToFind, List<Unit> conversionPath = null)
+        {
+            if(conversionPath == null)
             {
-                foreach (var conversion in unit2.ConversionTable)
+                conversionPath = new List<Unit>();
+            }
+
+            if(UnitContainsConversion(currentUnit, unitToFind))
+            {
+                return new DeepConversionResult(currentUnit, conversionPath, true);
+            }
+
+            foreach (var conversion in currentUnit.ConversionTable)
+            {
+                if (conversionPath.Contains(currentUnit)) continue;
+                IEnumerable<Unit> matchingUnits = Units.Where(x => x.Name == conversion.Key);
+                if (matchingUnits.Count() > 0)
                 {
-                    if (conversion.Key == unit)
-                    {
-                        foundUnit.Name = unit;
-                        foundUnit.UnitType = unit2.UnitType;
-                        return true;
-                    }
+                    conversionPath.Add(matchingUnits.First());
+                    return DeepConversionSearch(matchingUnits.First(), unitToFind, conversionPath);
+                }
+            }
+            return new DeepConversionResult(new Unit(), conversionPath, false);
+        }
+
+        private bool UnitContainsConversion(Unit unit, string targetUnit)
+        {
+            foreach (var conversion in unit.ConversionTable)
+            {
+                if (conversion.Key == targetUnit)
+                {
+                    return true;
                 }
             }
             return false;
