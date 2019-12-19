@@ -1,0 +1,10 @@
+{
+    "name":"inch",
+    "symbol": "in",
+    "type": "length",
+    "usesSIPrefixes": "false",
+    "conversionTable": {
+        "foot": "0.0833333333",
+        "meter": "0.0254"
+    }
+}

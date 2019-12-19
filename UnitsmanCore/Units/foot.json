@@ -4,7 +4,7 @@
     "type": "length",
     "usesSIPrefixes": "false",
     "conversionTable": {
-        "inch": "12",
-        "meter": "0.3048"
+        "yard": "0.333333333",
+        "inch": "12"
     }
 }

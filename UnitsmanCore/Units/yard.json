@@ -1,0 +1,9 @@
+{
+    "name":"yard",
+    "symbol": "yd",
+    "type": "length",
+    "usesSIPrefixes": "false",
+    "conversionTable": {
+        "foot": "3"
+    }
+}

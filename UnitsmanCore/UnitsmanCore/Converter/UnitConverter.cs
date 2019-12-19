@@ -126,16 +126,19 @@ namespace UnitsmanCore.Converter
         private Tuple<string, double> GenerateConversionTableFromPath(Unit startingUnit, string targetUnit, List<Unit> conversionPath)
         {
             string key = startingUnit.Name;
-            double val = 0;
+            double val = 1;
 
             for(int i = 0; i < conversionPath.Count; i++) 
             {
-                val = 1 / conversionPath[i].ConversionTable[key];
-                key = conversionPath[i].Name;
-                if(i == conversionPath.Count - 1)
+                if (i + 1 < conversionPath.Count)
                 {
-                    val *= conversionPath[i].ConversionTable[targetUnit];
+                    key = conversionPath[i+1].Name;
                 }
+                else
+                {
+                    key = targetUnit;
+                }
+                val *= conversionPath[i].ConversionTable[key];
             }
 
             return new Tuple<string, double>(startingUnit.Name, val);
@@ -143,9 +146,11 @@ namespace UnitsmanCore.Converter
 
         private DeepConversionResult DeepConversionSearch(Unit currentUnit, string unitToFind, List<Unit> conversionPath = null)
         {
+            DeepConversionResult res = new DeepConversionResult();
             if(conversionPath == null)
             {
                 conversionPath = new List<Unit>();
+                conversionPath.Add(currentUnit);
             }
 
             if(UnitContainsConversion(currentUnit, unitToFind))
@@ -155,12 +160,16 @@ namespace UnitsmanCore.Converter
 
             foreach (var conversion in currentUnit.ConversionTable)
             {
-                if (conversionPath.Contains(currentUnit)) continue;
-                IEnumerable<Unit> matchingUnits = Units.Where(x => x.Name == conversion.Key);
+                List<Unit> matchingUnits = Units.Where(x => x.Name == conversion.Key && !conversionPath.Contains(x)).ToList();
                 if (matchingUnits.Count() > 0)
                 {
-                    conversionPath.Add(matchingUnits.First());
-                    return DeepConversionSearch(matchingUnits.First(), unitToFind, conversionPath);
+                    conversionPath.Add(matchingUnits.Last());
+                    res = DeepConversionSearch(matchingUnits[0], unitToFind, conversionPath);
+                    if (res.WasSuccessful) return res;
+                    else
+                    {
+                        conversionPath.Remove(matchingUnits.Last());
+                    }
                 }
             }
             return new DeepConversionResult(new Unit(), conversionPath, false);
