@@ -2,7 +2,7 @@
   "profiles": {
     "UnitsmanCore": {
       "commandName": "Project",
-      "commandLineArgs": "1 ft m"
+      "commandLineArgs": "1 ft km"
     }
   }
 }

@@ -94,8 +94,51 @@ namespace UnitsmanCore.Converter
                 {
                     return generatedUnit;
                 }
+                else
+                {
+                    if (SIPrefixEquivalentUnitExists(unit))
+                    {
+                        Unit baseUnit = GetUnitWithoutSIPrefix(unit);
+                        double multiplier = Math.Pow(10, (int)Enum.Parse(typeof(SIPrefixes), GetSIPrefix(unit)));
+
+                        Unit finalUnit = new Unit(unit, unit, baseUnit.UnitType, MultiplyDictionaryValues(baseUnit.ConversionTable, multiplier));
+                        return baseUnit;
+                    }
+                }
                 throw new UnitNotFoundException($"{unit.ToUpperInvariant()} was not found in units table.");
             }
+            return foundUnit;
+        }
+
+        private Dictionary<string, double> MultiplyDictionaryValues(Dictionary<string, double> dictionary, double multiplier)
+        {
+            Dictionary<string, double> finalDictionary = dictionary;
+            for(int i = 0; i < finalDictionary.Count; i++)
+            {
+                string key = finalDictionary.ElementAt(i).Key;
+                finalDictionary[key] *= multiplier;
+            }
+            return finalDictionary;
+        }
+
+        private string GetSIPrefix(string unitSymbol)
+        {
+            return unitSymbol.Length > 2 ? "da" : unitSymbol[0].ToString();
+        }
+
+        private bool SIPrefixEquivalentUnitExists(string unitSymbol)
+        {
+            if (unitSymbol.Length < 2) return false; //Si prefix + unit is at least 2 chars long
+
+            Unit foundUnit = GetUnitWithoutSIPrefix(unitSymbol);
+            return foundUnit.UnitType != UnitTypes.None;
+        }
+
+        private Unit GetUnitWithoutSIPrefix(string unit)
+        {
+            string unitWithoutPrefix = unit.Length > 2 ? unit.Substring(2, unit.Length - 2) : unit.Substring(1, unit.Length - 1);
+
+            Unit foundUnit = Units.Find(x => x.UsesSIPrefixes == true && x.Symbol == unitWithoutPrefix);
             return foundUnit;
         }
 
