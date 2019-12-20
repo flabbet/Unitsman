@@ -54,9 +54,17 @@ namespace UnitsmanCore.Converter
                 {
                     return value * ParsedSourceUnit.ConversionTable[ParsedTargetUnit.Name];
                 }
+
                 else if (ParsedTargetUnit.ConversionTable.ContainsKey(ParsedSourceUnit.Name))
                 {
                     return value * ParsedTargetUnit.ConversionTable[ParsedSourceUnit.Name];
+                }
+                else
+                {
+                    if (TryGetConversion(ParsedSourceUnit, ParsedTargetUnit.Name, out Tuple<string, double> generatedConversion))
+                    {
+                        return value * generatedConversion.Item2;
+                    }
                 }
 
                 throw new ConversionNotFoundException($"Conversion from {ParsedSourceUnit.Name.ToUpperInvariant()} to " +
@@ -75,11 +83,11 @@ namespace UnitsmanCore.Converter
         }
 
         public Unit FindUnit(string unit)
-        {           
-           Unit foundUnit = Units.Find(x => x.Name == unit || x.Symbol == unit);
-            if(foundUnit.UnitType == UnitTypes.None)
+        {
+            Unit foundUnit = Units.Find(x => x.Name == unit || x.Symbol == unit);
+            if (foundUnit.UnitType == UnitTypes.None)
             {
-                if (TryGetFromConversionTable(unit, ParsedSourceUnit, ParsedTargetUnit, out Unit generatedUnit))
+                if (TryGenerateFromConversionTable(unit, ParsedSourceUnit, ParsedTargetUnit, out Unit generatedUnit))
                 {
                     return generatedUnit;
                 }
@@ -88,7 +96,19 @@ namespace UnitsmanCore.Converter
             return foundUnit;
         }
 
-        private bool TryGetFromConversionTable(string unit, Unit unit1, Unit unit2 ,out Unit foundUnit)
+        private bool TryGetConversion(Unit srcUnit, string targetUnit, out Tuple<string, double> conversion)
+        {
+            conversion = new Tuple<string, double>("", 0);
+            DeepConversionResult resultDeepConversion = DeepConversionSearch(srcUnit, targetUnit);
+            if (resultDeepConversion.WasSuccessful)
+            {
+                Tuple<string, double> conversionRecord = GenerateConversionTableFromPath(srcUnit, targetUnit, resultDeepConversion.ConversionPath);
+                conversion = conversionRecord;
+            }
+            return resultDeepConversion.WasSuccessful;
+        }
+
+        private bool TryGenerateFromConversionTable(string unit, Unit unit1, Unit unit2, out Unit foundUnit)
         {
             foundUnit = new Unit
             {
@@ -99,11 +119,11 @@ namespace UnitsmanCore.Converter
             };
 
             Unit deepSearchTargetUnit = new Unit();
-            if(unit1.UnitType != UnitTypes.None)
+            if (unit1.UnitType != UnitTypes.None)
             {
                 deepSearchTargetUnit = unit1;
             }
-            else if(unit2.UnitType != UnitTypes.None)
+            else if (unit2.UnitType != UnitTypes.None)
             {
                 deepSearchTargetUnit = unit2;
             }
@@ -128,11 +148,11 @@ namespace UnitsmanCore.Converter
             string key = startingUnit.Name;
             double val = 1;
 
-            for(int i = 0; i < conversionPath.Count; i++) 
+            for (int i = 0; i < conversionPath.Count; i++)
             {
                 if (i + 1 < conversionPath.Count)
                 {
-                    key = conversionPath[i+1].Name;
+                    key = conversionPath[i + 1].Name;
                 }
                 else
                 {
@@ -147,13 +167,13 @@ namespace UnitsmanCore.Converter
         private DeepConversionResult DeepConversionSearch(Unit currentUnit, string unitToFind, List<Unit> conversionPath = null)
         {
             DeepConversionResult res = new DeepConversionResult();
-            if(conversionPath == null)
+            if (conversionPath == null)
             {
                 conversionPath = new List<Unit>();
                 conversionPath.Add(currentUnit);
             }
 
-            if(UnitContainsConversion(currentUnit, unitToFind))
+            if (UnitContainsConversion(currentUnit, unitToFind))
             {
                 return new DeepConversionResult(currentUnit, conversionPath, true);
             }
@@ -186,6 +206,6 @@ namespace UnitsmanCore.Converter
             }
             return false;
         }
-        
+
     }
 }
