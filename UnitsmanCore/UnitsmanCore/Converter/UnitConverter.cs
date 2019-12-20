@@ -9,6 +9,8 @@ namespace UnitsmanCore.Converter
     public class UnitConverter
     {
 
+        const string UnknownSymbol = "Unknown";
+
         public List<Unit> Units { get; set; }
         public double Value { get; set; }
         public string SourceUnit { get; set; }
@@ -44,6 +46,8 @@ namespace UnitsmanCore.Converter
             {
                 ParsedSourceUnit = FindUnit(sourceUnit);
                 ParsedTargetUnit = FindUnit(targetUnit);
+
+
                 if (!ConversionPossible(ParsedSourceUnit, ParsedTargetUnit))
                 {
                     throw new ConversionMismatchException($"Conversion of {ParsedSourceUnit.UnitType} to " +
@@ -76,9 +80,17 @@ namespace UnitsmanCore.Converter
             }
             catch (ConversionException ex)
             {
-                throw ex;
+                try
+                {
+                    return Convert(value, targetUnit, sourceUnit);
+                }
+                catch
+                {
+                    throw ex;
+                }
             }
         }
+
 
         private bool ConversionPossible(Unit srcUnit, Unit targetUnit)
         {
@@ -158,7 +170,7 @@ namespace UnitsmanCore.Converter
         {
             foundUnit = new Unit
             {
-                Symbol = "Unknown",
+                Symbol = UnknownSymbol,
                 UnitType = "",
                 UsesSIPrefixes = false,
                 ConversionTable = new Dictionary<string, double>()

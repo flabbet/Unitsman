@@ -17,7 +17,7 @@ namespace UnitsmanCore.IO
         public List<Unit> LoadUnits()
         {
             List<Unit> finalList = new List<Unit>();
-            string[] filesInDir = Directory.GetFiles(PathToFolder, "*.json");
+            string[] filesInDir = Directory.GetFiles(PathToFolder,"*.json", SearchOption.AllDirectories);
             for(int i = 0; i < filesInDir.Length; i++)
             {
                 string rawJson = File.ReadAllText(filesInDir[i]);

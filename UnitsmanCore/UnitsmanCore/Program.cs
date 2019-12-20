@@ -15,34 +15,33 @@ namespace UnitsmanCore
     {
         static void Main(string[] args)
         {
-                var parsedArgs = Parser.Default.ParseArguments<Options>(args);
-                Options options = new Options();
-                parsedArgs.WithParsed(options => Run(options))
-                    .WithNotParsed(errs=> HandleParseError(errs));
+            var parsedArgs = Parser.Default.ParseArguments<Options>(args);
+            Options options = new Options();
+            parsedArgs.WithParsed(options => Run(options))
+                .WithNotParsed(errs => HandleParseError(errs));
 
-                
         }
 
-            
+
         private static void Run(Options options)
         {
-            try 
+            try
             {
-            Directory.SetCurrentDirectory(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
-            UnitsLoader loader = new UnitsLoader(FindParentDirectory(Directory.GetCurrentDirectory(), "Units"));
-            Console.WriteLine("Loading Units...");
-            List<Unit> units = loader.LoadUnits();
-            Console.WriteLine($"{units.Count} units loaded");
+                Directory.SetCurrentDirectory(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
+                UnitsLoader loader = new UnitsLoader(FindParentDirectory(Directory.GetCurrentDirectory(), "Units"));
+                Console.WriteLine("Loading Units...");
+                List<Unit> units = loader.LoadUnits();
+                Console.WriteLine($"{units.Count} units loaded.");
 
-            UnitConverter converter = new UnitConverter(units, options.Unit1Value, options.SourceUnit, options.TargetUnit);
-            double convertedValue = converter.Convert();
-            Console.WriteLine($"{options.Unit1Value}{options.SourceUnit} = {convertedValue}{options.TargetUnit}");
-        }
-            catch(ConversionException ex)
+                UnitConverter converter = new UnitConverter(units, options.Unit1Value, options.SourceUnit, options.TargetUnit);
+                double convertedValue = converter.Convert();
+                Console.WriteLine($"{options.Unit1Value}{options.SourceUnit} = {convertedValue}{options.TargetUnit}");
+            }
+            catch (ConversionException ex)
             {
                 Console.WriteLine(ex.Message);
             }
-            catch(DirectoryNotFoundException ex)
+            catch (DirectoryNotFoundException ex)
             {
                 Console.WriteLine(ex.Message + $" No units were loaded. Working directory was {Directory.GetCurrentDirectory()}");
             }
@@ -68,7 +67,7 @@ namespace UnitsmanCore
         {
             if (Directory.GetParent(currentPath) == null) throw new DirectoryNotFoundException($"Could not find directory {targetDirectory}.");
             string[] directories = Directory.GetDirectories(currentPath);
-            List<string> directoryNames = new List<string>(); 
+            List<string> directoryNames = new List<string>();
             directories.ToList().ForEach(x => directoryNames.Add(x.Split(Path.DirectorySeparatorChar).Last()));
             if (directoryNames.Contains(targetDirectory))
             {

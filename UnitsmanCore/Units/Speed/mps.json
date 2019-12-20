@@ -1,0 +1,13 @@
+{
+    "name":"metre per second",
+    "symbol": "m/s",
+    "symbolDefinitions": {
+        "m": "meter",
+        "s": "second"
+    },
+    "type": "speed",
+    "usesSIPrefixes": "true",
+    "conversionTable": {
+        "inches per second": "39.370078740157"
+    }
+}
