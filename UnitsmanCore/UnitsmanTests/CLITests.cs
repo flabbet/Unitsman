@@ -4,6 +4,7 @@ using UnitsmanCore.CLI;
 
 namespace UnitsmanTests
 {
+    [TestFixture]
     public class Tests
     {
         [Test]

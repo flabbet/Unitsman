@@ -46,7 +46,7 @@ namespace UnitsmanCore.Converter
                 ParsedTargetUnit = FindUnit(targetUnit);
                 if (!ConversionPossible(ParsedSourceUnit, ParsedTargetUnit))
                 {
-                    throw new ConversionMismatchException($"Conversion of {ParsedSourceUnit.UnitType.ToString()} to " +
+                    throw new ConversionMismatchException($"Conversion of {ParsedSourceUnit.UnitType} to " +
                     $"{ParsedTargetUnit.UnitType.ToString()} is not possible.");
                 }
 
@@ -88,7 +88,7 @@ namespace UnitsmanCore.Converter
         public Unit FindUnit(string unit)
         {
             Unit foundUnit = Units.Find(x => x.Name == unit || x.Symbol == unit);
-            if (foundUnit.UnitType == UnitTypes.None)
+            if (string.IsNullOrEmpty(foundUnit.UnitType))
             {
                 if (TryGenerateFromConversionTable(unit, ParsedSourceUnit, ParsedTargetUnit, out Unit generatedUnit))
                 {
@@ -131,7 +131,7 @@ namespace UnitsmanCore.Converter
             if (unitSymbol.Length < 2) return false; //Si prefix + unit is at least 2 chars long
 
             Unit foundUnit = GetUnitWithoutSIPrefix(unitSymbol);
-            return foundUnit.UnitType != UnitTypes.None;
+            return !string.IsNullOrEmpty(foundUnit.UnitType);
         }
 
         private Unit GetUnitWithoutSIPrefix(string unit)
@@ -159,17 +159,17 @@ namespace UnitsmanCore.Converter
             foundUnit = new Unit
             {
                 Symbol = "Unknown",
-                UnitType = UnitTypes.None,
+                UnitType = "",
                 UsesSIPrefixes = false,
                 ConversionTable = new Dictionary<string, double>()
             };
 
             Unit deepSearchTargetUnit = new Unit();
-            if (unit1.UnitType != UnitTypes.None)
+            if (!string.IsNullOrEmpty(unit1.UnitType))
             {
                 deepSearchTargetUnit = unit1;
             }
-            else if (unit2.UnitType != UnitTypes.None)
+            else if (!string.IsNullOrEmpty(unit2.UnitType))
             {
                 deepSearchTargetUnit = unit2;
             }
@@ -243,6 +243,7 @@ namespace UnitsmanCore.Converter
 
         private bool UnitContainsConversion(Unit unit, string targetUnit)
         {
+            if (unit.ConversionTable == null) return false;
             foreach (var conversion in unit.ConversionTable)
             {
                 if (conversion.Key == targetUnit)
