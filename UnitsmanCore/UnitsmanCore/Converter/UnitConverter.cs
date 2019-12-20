@@ -40,10 +40,19 @@ namespace UnitsmanCore.Converter
             }
         }
 
-        public double Convert(double value, string sourceUnit, string targetUnit)
+        public double Convert(double value, string sourceUnit, string targetUnit, bool reverseVal = false)
         {
             try
             {
+                if (reverseVal)
+                {
+                    ParsedSourceUnit = new Unit();
+                    ParsedTargetUnit = new Unit();
+                    var tmp = targetUnit;
+                    targetUnit = sourceUnit;
+                    sourceUnit = tmp;
+                }
+
                 ParsedSourceUnit = FindUnit(sourceUnit);
                 ParsedTargetUnit = FindUnit(targetUnit);
 
@@ -56,13 +65,15 @@ namespace UnitsmanCore.Converter
 
                 if (ParsedSourceUnit.ConversionTable.ContainsKey(ParsedTargetUnit.Name))
                 {
-                    return value * ParsedSourceUnit.ConversionTable[ParsedTargetUnit.Name];
+                    double conversionVal = ParsedSourceUnit.ConversionTable[ParsedTargetUnit.Name];
+                    if (reverseVal)
+                        return 1/(value * conversionVal);
+                    return value * conversionVal;
                 }
-
-                else if (ParsedTargetUnit.ConversionTable.ContainsKey(ParsedSourceUnit.Name))
+                if (ParsedTargetUnit.ConversionTable.ContainsKey(ParsedSourceUnit.Name))
                 {
                     double conversionVal = ParsedTargetUnit.ConversionTable[ParsedSourceUnit.Name];
-                    if (!Units.Contains(ParsedTargetUnit)) 
+                    if (!Units.Contains(ParsedTargetUnit) && reverseVal == false) 
                         return value * conversionVal;
                      return  1 / (value * conversionVal);
                 }
@@ -82,15 +93,49 @@ namespace UnitsmanCore.Converter
             {
                 try
                 {
-                    return Convert(value, targetUnit, sourceUnit);
+                    if (reverseVal == false && string.IsNullOrEmpty(ParsedSourceUnit.Name))
+                    {
+                        return value * Convert(1, sourceUnit, targetUnit, true); //When source unit is not defined, retries by replacing them.
+                    }
+                    throw ex;
                 }
                 catch
                 {
+                    if (ComplexConversionRequired(ParsedSourceUnit, ParsedTargetUnit))
+                    {
+                        Unit definedComplexUnit = ParsedSourceUnit.IsComplexType ? ParsedSourceUnit : ParsedTargetUnit;
+                        if (HasSameFormula(definedComplexUnit, targetUnit))
+                        {
+                            Dictionary<string, double> convertedPrimitiveUnits = new Dictionary<string, double>();
+                            string[] extractedSymbols = targetUnit.Split("/");
+                            for (int i = 0; i < definedComplexUnit.SymbolDefinitions.Count; i++)
+                            {
+                                string key = definedComplexUnit.SymbolDefinitions.ElementAt(i).Key;
+                                convertedPrimitiveUnits.Add(extractedSymbols[i], Convert(1, extractedSymbols[i], key, true));
+                            }
+                            string formulaWithValues = FillFormula(definedComplexUnit.Symbol, convertedPrimitiveUnits);
+
+                        }
+                    }
                     throw ex;
                 }
             }
         }
 
+        private string FillFormula(string formula, Dictionary<string, double> values)
+        {
+            return "";
+        }
+
+        private bool HasSameFormula(Unit definedUnit, string targetUnit)
+        {
+            return definedUnit.SymbolDefinitions.Count == targetUnit.Split('/').Length;
+        }
+
+        private bool ComplexConversionRequired(Unit unit1, Unit unit2)
+        {
+            return unit1.IsComplexType && unit2.Symbol == null || unit2.IsComplexType && unit1.Symbol == null;
+        }
 
         private bool ConversionPossible(Unit srcUnit, Unit targetUnit)
         {

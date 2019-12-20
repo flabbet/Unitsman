@@ -26,7 +26,7 @@ namespace UnitsmanTests
         [TestCase(1, "m", "ft", 3.2808399)]
         [TestCase(5, "yd", "inch", 180)]
         [TestCase(999, "yd", "nautical mile", 0.493242765)]
-        [TestCase(999, "nautical mile", "yd", 0.493242765)]
+        [TestCase(999, "nautical mile", "yd", 2023346.46)]
         [TestCase(-5, "ft", "yard", -1.66666667)]
         [TestCase(-80, "dam", "m", -800)]
         [TestCase(123, "µm", "inch", 0.00484251969)]

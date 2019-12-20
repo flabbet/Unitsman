@@ -6,7 +6,7 @@
         "s": "second"
     },
     "type": "speed",
-    "usesSIPrefixes": "true",
+    "usesSIPrefixes": "false",
     "conversionTable": {
         "inches per second": "39.370078740157"
     }
