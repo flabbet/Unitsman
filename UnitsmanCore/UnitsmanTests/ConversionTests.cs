@@ -22,12 +22,15 @@ namespace UnitsmanTests
             Units = loader.LoadUnits();
         }
 
-        [TestCase(1, "ft", "m", ExpectedResult = 0.3048)]
-        [TestCase(1, "m", "ft", ExpectedResult = 3.2808399)]
-        public double TestThatConvertsCorrectly(double value, string srcUnit, string targetUnit)
+        [TestCase(1, "ft", "m", 0.3048)]
+        [TestCase(1, "m", "ft", 3.2808399)]
+        [TestCase(5, "yd", "inch", 180)]
+        [TestCase(999, "yd", "nautical mile", 0.493242765)]
+        [TestCase(-5, "ft", "yard", -1.66666667)]
+        public void TestThatConvertsCorrectly(double value, string srcUnit, string targetUnit, double expectedResult)
         {
-            UnitConverter converter = new UnitConverter(Units, value, srcUnit, targetUnit);          
-            return converter.Convert();          
+            UnitConverter converter = new UnitConverter(Units, value, srcUnit, targetUnit);
+            Assert.That(converter.Convert(), Is.EqualTo(expectedResult).Within(0.01));          
         }
 
         [TestCase(1, "roomba", "catacumba")]

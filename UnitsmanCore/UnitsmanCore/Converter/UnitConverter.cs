@@ -57,7 +57,10 @@ namespace UnitsmanCore.Converter
 
                 else if (ParsedTargetUnit.ConversionTable.ContainsKey(ParsedSourceUnit.Name))
                 {
-                    return value * ParsedTargetUnit.ConversionTable[ParsedSourceUnit.Name];
+                    double conversionVal = ParsedTargetUnit.ConversionTable[ParsedSourceUnit.Name];
+                    if (!Units.Contains(ParsedTargetUnit)) 
+                        return value * conversionVal;
+                     return  1 / (value * conversionVal);
                 }
                 else
                 {
