@@ -1,7 +1,9 @@
-﻿using System;
+﻿using NCalc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using UnitsmanCore.Exceptions;
 
 namespace UnitsmanCore.Converter
@@ -111,10 +113,14 @@ namespace UnitsmanCore.Converter
                             for (int i = 0; i < definedComplexUnit.SymbolDefinitions.Count; i++)
                             {
                                 string key = definedComplexUnit.SymbolDefinitions.ElementAt(i).Key;
-                                convertedPrimitiveUnits.Add(extractedSymbols[i], Convert(1, extractedSymbols[i], key, true));
+                                convertedPrimitiveUnits.Add(key, Convert(1, extractedSymbols[i], key, true));
                             }
                             string formulaWithValues = FillFormula(definedComplexUnit.Symbol, convertedPrimitiveUnits);
-
+                            Expression e = new Expression(formulaWithValues);
+                            double expressionVal = (double)e.Evaluate();
+                            if (!reverseVal)
+                                return value * (1/expressionVal);
+                            return value * expressionVal;
                         }
                     }
                     throw ex;
@@ -124,7 +130,13 @@ namespace UnitsmanCore.Converter
 
         private string FillFormula(string formula, Dictionary<string, double> values)
         {
-            return "";
+            string finalFormula = formula;
+            foreach (var value in values)
+            {
+                var regex = new Regex(Regex.Escape(value.Key));
+                finalFormula = regex.Replace(finalFormula, value.Value.ToString());
+            }
+            return finalFormula.Replace(',','.');
         }
 
         private bool HasSameFormula(Unit definedUnit, string targetUnit)
