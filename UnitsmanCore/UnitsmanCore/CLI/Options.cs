@@ -12,5 +12,8 @@ namespace UnitsmanCore.CLI
 
         [Value(2, MetaName = "Target Unit", Required = true, HelpText = "Unit you want to convert to (ex. meter, m).")]
         public string TargetUnit { get; set; }
+
+        [Option('d', "decimals", Default = 3, Required = false, HelpText = "Sets how precise output should be.")]
+        public int Decimals { get; set; }
     }
 }

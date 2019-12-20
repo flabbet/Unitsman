@@ -30,6 +30,7 @@ namespace UnitsmanTests
         [TestCase(-5, "ft", "yard", -1.66666667)]
         [TestCase(-80, "dam", "m", -800)]
         [TestCase(123, "µm", "inch", 0.00484251969)]
+        [TestCase(2, "m/s", "mm/s", 2000)]
         public void TestThatConvertsCorrectly(double value, string srcUnit, string targetUnit, double expectedResult)
         {
             UnitConverter converter = new UnitConverter(Units, value, srcUnit, targetUnit);

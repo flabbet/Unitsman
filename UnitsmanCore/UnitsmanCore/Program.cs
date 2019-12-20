@@ -34,7 +34,7 @@ namespace UnitsmanCore
                 Console.WriteLine($"{units.Count} units loaded.");
 
                 UnitConverter converter = new UnitConverter(units, options.Unit1Value, options.SourceUnit, options.TargetUnit);
-                double convertedValue = converter.Convert();
+                double convertedValue = Math.Round(converter.Convert(), Math.Clamp(options.Decimals, 0, 15));
                 Console.WriteLine($"{options.Unit1Value}{options.SourceUnit} = {convertedValue}{options.TargetUnit}");
             }
             catch (ConversionException ex)

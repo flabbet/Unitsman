@@ -108,24 +108,34 @@ namespace UnitsmanCore.Converter
                         Unit definedComplexUnit = ParsedSourceUnit.IsComplexType ? ParsedSourceUnit : ParsedTargetUnit;
                         if (HasSameFormula(definedComplexUnit, targetUnit))
                         {
-                            Dictionary<string, double> convertedPrimitiveUnits = new Dictionary<string, double>();
-                            string[] extractedSymbols = targetUnit.Split("/");
-                            for (int i = 0; i < definedComplexUnit.SymbolDefinitions.Count; i++)
-                            {
-                                string key = definedComplexUnit.SymbolDefinitions.ElementAt(i).Key;
-                                convertedPrimitiveUnits.Add(key, Convert(1, extractedSymbols[i], key, true));
-                            }
-                            string formulaWithValues = FillFormula(definedComplexUnit.Symbol, convertedPrimitiveUnits);
-                            Expression e = new Expression(formulaWithValues);
-                            double expressionVal = (double)e.Evaluate();
-                            if (!reverseVal)
-                                return value * (1/expressionVal);
-                            return value * expressionVal;
+                            return ConvertComplexExpression(targetUnit, definedComplexUnit, reverseVal, value);
                         }
                     }
                     throw ex;
                 }
             }
+        }
+
+        private double ConvertComplexExpression(string targetUnit, Unit definedComplexUnit, bool reverseVal, double value)
+        {
+            Dictionary<string, double> convertedPrimitiveUnits = new Dictionary<string, double>();
+            string[] extractedSymbols = targetUnit.Split("/");
+            for (int i = 0; i < definedComplexUnit.SymbolDefinitions.Count; i++)
+            {
+                string key = definedComplexUnit.SymbolDefinitions.ElementAt(i).Key;
+                if(key == extractedSymbols[i])
+                {
+                    convertedPrimitiveUnits.Add(key, 1);
+                    continue;
+                }
+                convertedPrimitiveUnits.Add(key, Convert(1, extractedSymbols[i], key, true));
+            }
+            string formulaWithValues = FillFormula(definedComplexUnit.Symbol, convertedPrimitiveUnits);
+            Expression e = new Expression(formulaWithValues);
+            double expressionVal = (double)e.Evaluate();
+            if (!reverseVal)
+                return value * (1 / expressionVal);
+            return value * expressionVal;
         }
 
         private string FillFormula(string formula, Dictionary<string, double> values)
