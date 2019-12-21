@@ -92,12 +92,12 @@ namespace UnitsmanCore.Converter
             return finalDictionary;
         }
 
-        private string GetSIPrefix(string unitSymbol)
+        public string GetSIPrefix(string unitSymbol)
         {
             return unitSymbol.Length > 2 ? "da" : unitSymbol[0].ToString();
         }
 
-        private bool SIPrefixEquivalentUnitExists(string unitSymbol)
+        public bool SIPrefixEquivalentUnitExists(string unitSymbol)
         {
             if (unitSymbol.Length < 2) return false; //Si prefix + unit is at least 2 chars long
 
@@ -105,7 +105,7 @@ namespace UnitsmanCore.Converter
             return !string.IsNullOrEmpty(foundUnit.UnitType);
         }
 
-        private Unit GetUnitWithoutSIPrefix(string unit)
+        public Unit GetUnitWithoutSIPrefix(string unit)
         {
             string unitWithoutPrefix = unit.Length > 2 ? unit.Substring(2, unit.Length - 2) : unit.Substring(1, unit.Length - 1);
 
