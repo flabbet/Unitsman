@@ -12,6 +12,8 @@ To build open .sln file in Visual Studio 2019 for example.
 `Unitsman <value> <unit> <targetUnit>` for example
 `Unitsman 50 km m` - this will convert 50 kilometers to meters
 
+For conversion precision use `-d <0-15>` or `--decimals <0-15>`
+
 Note: This is a CLI application so it needs to be run in command prompt or terminal
 
 # How smart is it?
