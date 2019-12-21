@@ -66,16 +66,20 @@ namespace UnitsmanCore.Converter
                     $"{ParsedTargetUnit.UnitType.ToString()} is not possible.");
                 }
 
-                if (ParsedSourceUnit.ConversionTable.ContainsKey(ParsedTargetUnit.Name))
+                if (ParsedSourceUnit.ConversionTable.ContainsKey(ParsedTargetUnit.Name) || 
+                    ParsedSourceUnit.ConversionTable.ContainsKey(ParsedTargetUnit.Symbol))
                 {
-                    double conversionVal = ParsedSourceUnit.ConversionTable[ParsedTargetUnit.Name];
+                    string key = ParsedSourceUnit.ConversionTable.ContainsKey(ParsedTargetUnit.Name) ? ParsedTargetUnit.Name : ParsedTargetUnit.Symbol;
+                    double conversionVal = ParsedSourceUnit.ConversionTable[key];
                     if (reverseVal)
                         return 1/(value * conversionVal);
                     return value * conversionVal;
                 }
-                if (ParsedTargetUnit.ConversionTable.ContainsKey(ParsedSourceUnit.Name))
+                if (ParsedTargetUnit.ConversionTable.ContainsKey(ParsedSourceUnit.Name) ||
+                    ParsedTargetUnit.ConversionTable.ContainsKey(ParsedTargetUnit.Symbol))
                 {
-                    double conversionVal = ParsedTargetUnit.ConversionTable[ParsedSourceUnit.Name];
+                    string key = ParsedTargetUnit.ConversionTable.ContainsKey(ParsedSourceUnit.Name) ? ParsedSourceUnit.Name : ParsedSourceUnit.Symbol;
+                    double conversionVal = ParsedTargetUnit.ConversionTable[key];
                     if (!Units.Contains(ParsedTargetUnit) && reverseVal == false) 
                         return value * conversionVal;
                      return  1 / (value * conversionVal);

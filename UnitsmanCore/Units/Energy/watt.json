@@ -1,0 +1,9 @@
+{
+    "name":"watt",
+    "symbol": "W",
+    "type": "energy",
+    "usesSIPrefixes": "true",
+    "conversionTable": {
+        "J/s": "1"
+    }
+}

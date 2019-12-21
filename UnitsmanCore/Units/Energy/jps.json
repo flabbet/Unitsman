@@ -1,0 +1,14 @@
+{
+    "name":"joules per second",
+    "symbol": "J/s",
+    "symbolDefinitions": {
+        "J": "joule",
+        "s": "second"
+    },
+
+    "type": "energy",
+    "usesSIPrefixes": "true",
+    "conversionTable": {
+        "watt": "1"
+    }
+}

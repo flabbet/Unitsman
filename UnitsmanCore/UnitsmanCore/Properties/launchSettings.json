@@ -2,7 +2,7 @@
   "profiles": {
     "UnitsmanCore": {
       "commandName": "Project",
-      "commandLineArgs": "1 m/s km/s -d 15"
+      "commandLineArgs": "--help"
     }
   }
 }

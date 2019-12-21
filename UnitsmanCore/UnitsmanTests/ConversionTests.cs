@@ -31,6 +31,11 @@ namespace UnitsmanTests
         [TestCase(-80, "dam", "m", -800)]
         [TestCase(123, "µm", "inch", 0.00484251969)]
         [TestCase(2, "m/s", "mm/s", 2000)]
+        [TestCase(0.2, "km/h", "m/s", 0.0555555556)]
+        [TestCase(50, "yd/h", "m/s", 0.0127)]
+        [TestCase(0.2, "Mm/h", "m/s", 55.5555556)]
+        [TestCase(214412, "joules per second", "watt", 214412)]
+        [TestCase(214412, "watt", "joules per second", 214412)]
         public void TestThatConvertsCorrectly(double value, string srcUnit, string targetUnit, double expectedResult)
         {
             UnitConverter converter = new UnitConverter(Units, value, srcUnit, targetUnit);

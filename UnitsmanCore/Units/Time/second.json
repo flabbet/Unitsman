@@ -2,7 +2,7 @@
     "name":"second",
     "symbol": "s",
     "type": "time",
-    "usesSIPrefixes": "false",
+    "usesSIPrefixes": "true",
     "conversionTable": {
         "hour": "0.000277777778",
         "minute": "0.0166666667"
