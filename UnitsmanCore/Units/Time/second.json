@@ -4,6 +4,7 @@
     "type": "time",
     "usesSIPrefixes": "false",
     "conversionTable": {
-        "h": "0.000277777778"
+        "hour": "0.000277777778",
+        "minute": "0.0166666667"
     }
 }

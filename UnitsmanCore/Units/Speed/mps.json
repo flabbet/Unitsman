@@ -8,6 +8,6 @@
     "type": "speed",
     "usesSIPrefixes": "false",
     "conversionTable": {
-        "inches per second": "39.370078740157"
+        "in/s": "39.370078740157"
     }
 }

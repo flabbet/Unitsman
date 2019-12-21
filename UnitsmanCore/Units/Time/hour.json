@@ -1,0 +1,10 @@
+{
+    "name":"hour",
+    "symbol": "h",
+    "type": "time",
+    "usesSIPrefixes": "false",
+    "conversionTable": {
+        "second": "3600",
+        "minute": "60"
+    }
+}

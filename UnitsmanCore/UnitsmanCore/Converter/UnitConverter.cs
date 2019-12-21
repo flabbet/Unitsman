@@ -113,22 +113,6 @@ namespace UnitsmanCore.Converter
                             return EvaluateFormula(definedComplexUnit, units, reverseVal, value);
                         }
                     }
-                    else
-                    {
-                        var units = GetUnitsFromRawFormula(sourceUnit);
-                        Dictionary<string, string> values = new Dictionary<string, string>();
-                        for (int i = 0; i < units.Length; i++)
-                        {
-                            if (Finder.SIPrefixEquivalentUnitExists(units[i])) 
-                            {
-                                Unit unitWithoutPrefix = Finder.GetUnitWithoutSIPrefix(units[i]);
-                                value *= Math.Pow(10, (int)Enum.Parse(typeof(SIPrefixes), Finder.GetSIPrefix(units[i])));
-                                values.Add(units[i], unitWithoutPrefix.Symbol);
-                            }
-                        }
-                        if (values.Count > 0)
-                            return Convert(value, FillFormula(sourceUnit, values), targetUnit);
-                    }
                     throw ex;
                 }
             }

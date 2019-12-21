@@ -2,7 +2,7 @@
   "profiles": {
     "UnitsmanCore": {
       "commandName": "Project",
-      "commandLineArgs": "10 cm/s m/h"
+      "commandLineArgs": "10 in/s dam/s"
     }
   }
 }
