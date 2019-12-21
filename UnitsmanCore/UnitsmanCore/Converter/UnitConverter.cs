@@ -113,6 +113,7 @@ namespace UnitsmanCore.Converter
                             return EvaluateFormula(definedComplexUnit, units, reverseVal, value);
                         }
                     }
+
                     throw ex;
                 }
             }

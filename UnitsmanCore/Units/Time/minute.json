@@ -1,6 +1,6 @@
 {
     "name":"minute",
-    "symbol": "m",
+    "symbol": "min",
     "type": "time",
     "usesSIPrefixes": "false",
     "conversionTable": {
