@@ -37,18 +37,18 @@ namespace UnitsmanTests
             Assert.That(converter.Convert(), Is.EqualTo(expectedResult).Within(0.01));          
         }
 
-        [TestCase(1, "roomba", "catacumba")]
-        public void TestThatConverterThrowsUnitNotFound(double value, string srcUnit, string targetUnit)
+        [TestCase("roomba")]
+        public void TestThatFinderThrowsUnitNotFound(string srcUnit)
         {
-            UnitConverter converter = new UnitConverter(Units, value, srcUnit, targetUnit);
+            UnitFinder finder = new UnitFinder(Units);
 
             Assert.Throws<UnitNotFoundException>(delegate
             {
-                FindConverterUnit(srcUnit, converter);
+                FindConverterUnit(srcUnit, finder);
             });
         }
 
-        private Unit FindConverterUnit(string unit, UnitConverter converter)
+        private Unit FindConverterUnit(string unit, UnitFinder converter)
         {
             return converter.FindUnit(unit);
         }
