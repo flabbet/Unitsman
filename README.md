@@ -7,7 +7,7 @@ Unitsman is a lightweighted program that deals very smartly with converting unit
 # Requirements
 
 Unitsman requires `.NET Core 3.1` installed.
-To build open .sln file in Visual Studio 2019 for example.
+To build, open .sln file in Visual Studio 2019 for example.
 
 # Usage
 
@@ -36,4 +36,4 @@ Program loads units from Units folder. This folder contains .json files in which
 
 # Creating new Units
 
-Units .jsons are pretty simple to understand, check out existing ones for reference.
+Units jsons are pretty simple to understand, check out existing ones for reference.
