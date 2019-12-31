@@ -1,4 +1,4 @@
-[![Build Status](https://dev.azure.com/flabbet/PixiEditor/_apis/build/status/flabbet.Unitsman?branchName=master)](https://dev.azure.com/flabbet/PixiEditor/_build/latest?definitionId=1&branchName=master)
+[![Build Status](https://dev.azure.com/flabbet/Unitsman/_apis/build/status/flabbet.Unitsman?branchName=master)](https://dev.azure.com/flabbet/Unitsman/_build/latest?definitionId=2&branchName=master)
 
 # What is Unitsman?
 
