@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System.Collections.Generic;
+using System.IO;
 using UnitsmanCore.Converter;
 using UnitsmanCore.IO;
 
@@ -11,7 +12,8 @@ namespace UnitsmanTests
         [Test]
         public void TestThatLoaderDeserializesAllFiles()
         {
-            UnitsLoader loader = new UnitsLoader("TestFiles");
+            var path = UnitsLoader.FindParentDirectory(Directory.GetCurrentDirectory(), "TestFiles");
+            UnitsLoader loader = new UnitsLoader(path);
             List<Unit> units = loader.LoadUnits();
             Assert.AreEqual("meter", units[0].Name);
             Assert.AreEqual("m", units[0].Symbol);

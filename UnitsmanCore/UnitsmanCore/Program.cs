@@ -27,7 +27,7 @@ namespace UnitsmanCore
             try
             {
                 Directory.SetCurrentDirectory(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
-                UnitsLoader loader = new UnitsLoader(FindParentDirectory(Directory.GetCurrentDirectory(), "Units"));
+                UnitsLoader loader = new UnitsLoader(UnitsLoader.FindParentDirectory(Directory.GetCurrentDirectory(), "Units"));
                 Console.WriteLine("Loading Units...");
                 List<Unit> units = loader.LoadUnits();
                 Console.WriteLine($"{units.Count} units loaded.");
@@ -60,23 +60,7 @@ namespace UnitsmanCore
                 return;
             }
             Console.WriteLine("Parser Fail");
-        }
-
-        private static string FindParentDirectory(string currentPath, string targetDirectory)
-        {
-            if (Directory.GetParent(currentPath) == null) throw new DirectoryNotFoundException($"Could not find directory {targetDirectory}.");
-            string[] directories = Directory.GetDirectories(currentPath);
-            List<string> directoryNames = new List<string>();
-            directories.ToList().ForEach(x => directoryNames.Add(x.Split(Path.DirectorySeparatorChar).Last()));
-            if (directoryNames.Contains(targetDirectory))
-            {
-                return Path.Combine(currentPath, targetDirectory);
-            }
-            else
-            {
-                return FindParentDirectory(Directory.GetParent(currentPath).FullName, targetDirectory);
-            }
-        }
+        }       
 
     }
 }
