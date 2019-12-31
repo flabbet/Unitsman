@@ -1,3 +1,5 @@
+[![Build Status](https://dev.azure.com/flabbet/PixiEditor/_apis/build/status/flabbet.Unitsman?branchName=master)](https://dev.azure.com/flabbet/PixiEditor/_build/latest?definitionId=1&branchName=master)
+
 # What is Unitsman?
 
 Unitsman is a lightweighted program that deals very smartly with converting units.
