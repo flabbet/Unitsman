@@ -39,4 +39,5 @@ Program loads units from Units folder. This folder contains .json files in which
 Units jsons are pretty simple to understand, check out existing ones for reference.
 
 ---
-[![](https://codescene.io/projects/6681/status.svg) Get more details at **codescene.io**.](https://codescene.io/projects/6681/jobs/latest-successful/results)
+
+<a href="https://codescene.io/projects/6681/jobs/latest-successful/results"><img src="https://codescene.io/projects/6681/status.svg" />Get more details at <strong>codescene.io</strong>.</a>
